@@ -15,33 +15,17 @@ jobs:
         with:
           distribution: temurin
           java-version: 21
-      - name: Ilova fayllarini yaratish
-        run: |
-          mkdir -p www
-          cat > www/index.html << 'HTMLEOF'
-          <!DOCTYPE html>
-          <html lang="uz">
-          <head>
-          <meta charset="utf-8">
-          <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-          <title>Eslatma</title>
-          </head>
-          <body>
-          <h1>Eslatma ilovasi</h1>
-          </body>
-          </html>
-          HTMLEOF
 
-      - name: Cordova o'rnatish va APK yig'ish
+      - name: Cordova o'rnatish va loyihani yig'ish
         run: |
           npm install -g cordova
           cordova create myApp com.eslatma.app Eslatma
           cd myApp
-          cp -r ../www/* www/
+          cp -r ../* www/ 2>/dev/null || true
           cordova platform add android
           cordova build android --verbose
 
-      - name: APK faylni yuklab olish uchun saqlash
+      - name: APK faylni saqlash
         uses: actions/upload-artifact@v4
         with:
           name: Eslatma-App-APK
