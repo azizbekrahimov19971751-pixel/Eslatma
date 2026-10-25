@@ -181,11 +181,15 @@ dialog.fb[open]{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);z
 
 <script>
 (function(){
-  function show(t){ var d = document.createElement('div');
-    d.style.cssText = 'position:fixed;top:0;left:0;right:0;background:#b00020;color:#fff;padding:8px;font:12px monospace;z-index:999;pointer-events:none';
-    d.appendChild(document.createTextNode(t)); (document.body || document.documentElement).appendChild(d); }
-  window.addEventListener('error', function(e){ show('XATO: ' + e.message + ' (qator ' + (e.lineno || '?') + ')'); });
-  setTimeout(function(){ if (!window.__eslatmaOK) show('Dastur ishga tushmadi. Telefondagi Android System WebView va Chrome ni Play Market orqali yangilang.'); }, 2500);
+  var box;
+  function show(t){
+    if (!box){ box = document.createElement('div'); box.style.cssText = 'position:fixed;top:0;left:0;right:0;z-index:999;pointer-events:none'; (document.body || document.documentElement).appendChild(box); }
+    var d = document.createElement('div'); d.style.cssText = 'background:#b00020;color:#fff;padding:6px 8px;font:12px monospace;border-bottom:1px solid #fff';
+    d.appendChild(document.createTextNode(t)); box.appendChild(d); }
+  window.addEventListener('error', function(e){ show('XATO: ' + e.message + ' [qator ' + (e.lineno || '?') + ':' + (e.colno || '?') + ']'); });
+  window.addEventListener('unhandledrejection', function(e){ show('XATO (promise): ' + ((e.reason && e.reason.message) || e.reason)); });
+  document.addEventListener('securitypolicyviolation', function(e){ show('CSP: ' + e.violatedDirective + ' ' + e.blockedURI); });
+  setTimeout(function(){ if (!window.__eslatmaOK) show('Dastur toliq ishga tushmadi (yuqoridagi xatoga qarang).'); }, 2500);
 })();
 </script>
 <script>
@@ -295,12 +299,4 @@ function parts(iso) {
   const ms = new Date(iso) - Date.now();
   if (ms < 0) {
     const od = -dayTo(iso);
-    return od >= 1 ? { n: od, u: "kun o\u02BBtib ketdi", over: true } : { n: "!", u: "muddati o\u02BBtdi", over: true };
-  }
-  const m = Math.floor(ms / 6e4), h = Math.floor(m / 60), d = dayTo(iso);
-  if (d >= 1) return { n: d, u: "kun qoldi", soon: d <= 1 };
-  if (h >= 1) return { n: h, u: "soat qoldi", soon: true };
-  return { n: m, u: "daqiqa qoldi", soon: true };
-}
-function card(n) {
-  const fin = n.done, p = fin ? { n: 
+    return od >= 1 ? { n: od, u: "kun
